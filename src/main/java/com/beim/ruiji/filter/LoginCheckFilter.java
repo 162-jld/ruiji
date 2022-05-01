@@ -3,7 +3,6 @@ package com.beim.ruiji.filter;
 import com.alibaba.fastjson.JSON;
 import com.beim.ruiji.common.R;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.*;
@@ -42,6 +41,8 @@ public class LoginCheckFilter implements Filter {
         // 获取被拦截的请求路径
         String requestURI = request.getRequestURI();
 
+        log.info("拦截到请求：{}",requestURI);
+
         // 检查是否需要放行
         if (check(urls,requestURI)){
             filterChain.doFilter(request, response);
@@ -50,10 +51,12 @@ public class LoginCheckFilter implements Filter {
 
         // 判断用户是否完成登录
         if (request.getSession().getAttribute("employee") != null){
+            log.info("登录用户的id为：{}",request.getSession().getAttribute("employee"));
             filterChain.doFilter(request, response);
             return;
         }
 
+        log.info("用户未登录");
 
         // 如果未登录则返回未登录结果,通过输出流，fastjson 将结果用JSON写回到前端
         response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
