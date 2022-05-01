@@ -38,6 +38,7 @@ public class LoginCheckFilter implements Filter {
                 "/front/**"
         };
 
+
         // 获取被拦截的请求路径
         String requestURI = request.getRequestURI();
 
