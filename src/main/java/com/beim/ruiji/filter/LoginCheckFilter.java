@@ -55,7 +55,7 @@ public class LoginCheckFilter implements Filter {
         }
 
 
-        // 如果未登录则返回未登录结果,通过输出流，将结果用JSON写回到前端
+        // 如果未登录则返回未登录结果,通过输出流，fastjson 将结果用JSON写回到前端
         response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
     }
 
