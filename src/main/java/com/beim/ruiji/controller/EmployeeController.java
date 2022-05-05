@@ -147,8 +147,8 @@ public class EmployeeController {
         log.info(employee.toString());
 
         // 封装employee数据
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser((Long) session.getAttribute("employee"));
+//        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setUpdateUser((Long) session.getAttribute("employee"));
         employee.setStatus(employee.getStatus());
 
         // 执行更新操作

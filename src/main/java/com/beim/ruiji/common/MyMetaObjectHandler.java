@@ -26,13 +26,26 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
 
         // 设置公共字段值
         metaObject.setValue("createTime", LocalDateTime.now());
+        metaObject.setValue("updateTime",LocalDateTime.now());
+
+        metaObject.setValue("createUser",BaseContext.getCurrentId());
+        metaObject.setValue("updateUser",BaseContext.getCurrentId());
 
     }
 
+    /**
+     * 更新操作，自动更新
+     * @param metaObject
+     */
     @Override
     public void updateFill(MetaObject metaObject) {
         log.info("公共字段自动填充【update...】");
         log.info(metaObject.toString());
+
+        // 设置公共字段值
+        metaObject.setValue("updateUser",BaseContext.getCurrentId());
+        metaObject.setValue("updateTime",LocalDateTime.now());
+
 
     }
 }

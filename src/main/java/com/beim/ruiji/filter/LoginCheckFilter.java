@@ -1,6 +1,7 @@
 package com.beim.ruiji.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.beim.ruiji.common.BaseContext;
 import com.beim.ruiji.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
@@ -27,6 +28,13 @@ public class LoginCheckFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
+        // 获取用户的ID
+        Long empId = (Long) request.getSession().getAttribute("employee");
+
+        // 将用户ID存储到ThreadLocal中
+        BaseContext.setCurrentId(empId);
+
+
         log.info("拦截的请求，{}",request.getRequestURI());
 
         // 白名单
@@ -50,7 +58,7 @@ public class LoginCheckFilter implements Filter {
         }
 
         // 判断用户是否完成登录
-        if (request.getSession().getAttribute("employee") != null){
+        if (empId != null){
             log.info("登录用户的id为：{}",request.getSession().getAttribute("employee"));
             filterChain.doFilter(request, response);
             return;
