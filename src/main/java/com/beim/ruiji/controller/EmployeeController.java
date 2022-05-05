@@ -91,12 +91,12 @@ public class EmployeeController {
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
 
         // 设置创建时间、更新时间
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-
-        // 设置创建人、更新人
-        employee.setCreateUser((Long) session.getAttribute("employee"));
-        employee.setUpdateUser((Long) session.getAttribute("employee"));
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
+//
+//        // 设置创建人、更新人
+//        employee.setCreateUser((Long) session.getAttribute("employee"));
+//        employee.setUpdateUser((Long) session.getAttribute("employee"));
 
         // 添加入库
         boolean save = employeeService.save(employee);
@@ -136,7 +136,12 @@ public class EmployeeController {
         return R.success(pageInfo);
     }
 
-
+    /**
+     * 员工数据修改
+     * @param session
+     * @param employee
+     * @return
+     */
     @PutMapping
     public R<String> update(HttpSession session,@RequestBody Employee employee){
         log.info(employee.toString());
@@ -149,5 +154,21 @@ public class EmployeeController {
         // 执行更新操作
         employeeService.updateById(employee);
         return R.success("员工信息修改成功！");
+    }
+
+
+    /**
+     * 根据员工ID查询员工信息
+     * @param id
+     * @return
+     */
+    @RequestMapping("/{id}")
+    public R<Employee> findById(@PathVariable("id") Long id){
+        log.info("接收到的员工ID为：" + id);
+
+        Employee byId = employeeService.getById(id);
+
+        return R.success(byId);
+
     }
 }
