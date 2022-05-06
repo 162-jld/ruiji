@@ -67,10 +67,22 @@ public class CategoryController {
         log.info("删除分类的id为：{}",ids);
 
         // 执行删除语句
-        categoryService.removeById(ids);
+//        categoryService.removeById(ids);
+        categoryService.remove(ids);
 
         return R.success("删除成功！");
     }
+
+    @PutMapping
+    public R<String> update(@RequestBody Category category){
+        log.info("要修改的分类为：" + category);
+
+        categoryService.updateById(category);
+
+        return R.success("修改成功！");
+    }
+
+
 
 
 
