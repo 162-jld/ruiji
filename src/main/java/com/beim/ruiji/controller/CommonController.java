@@ -3,14 +3,17 @@ package com.beim.ruiji.controller;
 import com.beim.ruiji.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -69,10 +72,38 @@ public class CommonController {
      * @param name
      * @param response
      */
+    @GetMapping("/download")
     public void download(String name, HttpServletResponse response){
 
-        // 通过输入流读取文件内容
-//        FileInputStream inputStream = new FileInputStream()
+
+        try {
+            // 通过输入流读取文件内容
+            FileInputStream fileInputStream = new FileInputStream(basePath + name);
+
+            // 设置响应数据的格式
+            response.setContentType("image/jpeg");
+
+            // 通过输出流输出文件，在浏览器中展示文件
+            ServletOutputStream outputStream = response.getOutputStream();
+
+            int len = 0;
+            byte[] bytes = new byte[1024];
+            // 每次读取bytes个长度，当等于-1的时候表示读取完
+            while ((len =  fileInputStream.read(bytes)) != -1){
+                // 代表已经读取完毕
+                outputStream.write(bytes,0,len);
+
+                // 刷新
+                outputStream.flush();
+            }
+
+            // 关闭资源
+            outputStream.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
     }
 
