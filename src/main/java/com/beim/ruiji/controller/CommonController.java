@@ -42,27 +42,21 @@ public class CommonController {
 
         // 获取原始文件名称
         String originalFilename = file.getOriginalFilename();
-
         // 截取文件后缀名
         String suffix = originalFilename.substring(originalFilename.lastIndexOf("."));
-
         // 拼接文件名
         String fileName = UUID.randomUUID().toString() + suffix;
-
         // 判断转存目录是否存在,如果不存在则创建目录，如果存在则不创建
         File dir = new File(basePath);
         if (!dir.exists()){
             dir.mkdirs();
         }
-
-
         // 转存到指定目录
         try {
             file.transferTo(new File(basePath + fileName));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return R.success(fileName);
     }
 
@@ -74,15 +68,11 @@ public class CommonController {
      */
     @GetMapping("/download")
     public void download(String name, HttpServletResponse response){
-
-
         try {
             // 通过输入流读取文件内容
             FileInputStream fileInputStream = new FileInputStream(basePath + name);
-
             // 设置响应数据的格式
             response.setContentType("image/jpeg");
-
             // 通过输出流输出文件，在浏览器中展示文件
             ServletOutputStream outputStream = response.getOutputStream();
 
@@ -92,21 +82,12 @@ public class CommonController {
             while ((len =  fileInputStream.read(bytes)) != -1){
                 // 代表已经读取完毕
                 outputStream.write(bytes,0,len);
-
                 // 刷新
                 outputStream.flush();
             }
-
-            // 关闭资源
             outputStream.close();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
-
-
-
 }
