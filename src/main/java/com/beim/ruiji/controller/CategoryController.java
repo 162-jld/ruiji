@@ -53,6 +53,8 @@ public class CategoryController {
         // 查询数据
         categoryService.page(pageInfo,queryWrapper);
         return R.success(pageInfo);
+
+
     }
 
 
