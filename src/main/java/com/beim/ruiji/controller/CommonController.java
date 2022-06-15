@@ -13,7 +13,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -39,7 +38,6 @@ public class CommonController {
     public R<String> upload(MultipartFile file){
         // file为临时文件，需要转存到指定目录，否则本次请求完成后临时文件会删除
         log.info(file.toString());
-
         // 获取原始文件名称
         String originalFilename = file.getOriginalFilename();
         // 截取文件后缀名
@@ -75,7 +73,6 @@ public class CommonController {
             response.setContentType("image/jpeg");
             // 通过输出流输出文件，在浏览器中展示文件
             ServletOutputStream outputStream = response.getOutputStream();
-
             int len = 0;
             byte[] bytes = new byte[1024];
             // 每次读取bytes个长度，当等于-1的时候表示读取完
