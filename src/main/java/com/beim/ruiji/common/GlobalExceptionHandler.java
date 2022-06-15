@@ -19,7 +19,6 @@ import java.sql.SQLIntegrityConstraintViolationException;
 @ResponseBody
 public class GlobalExceptionHandler {
 
-
     /**
      * 异常处理方法
      * @param ex
@@ -34,7 +33,6 @@ public class GlobalExceptionHandler {
             String msg = split[2] + "已存在";
             return R.error(msg);
         }
-
         return R.error("未知错误！");
     }
 

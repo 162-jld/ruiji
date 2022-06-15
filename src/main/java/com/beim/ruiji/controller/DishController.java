@@ -10,6 +10,7 @@ import com.beim.ruiji.entity.DishFlavor;
 import com.beim.ruiji.service.CategoryService;
 import com.beim.ruiji.service.DishFlavorService;
 import com.beim.ruiji.service.DishService;
+import com.beim.ruiji.util.ListUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,12 +84,12 @@ public class DishController {
     }
 
     /**
-     * 根据ID回想菜品数据
+     * 根据ID回显菜品数据
      * @param id
      * @return
      */
     @GetMapping("/{id}")
-    public R<DishDto> EchoById(@PathVariable("id") String id){
+    public R<DishDto> echoById(@PathVariable("id") String id){
         DishDto dishDto = new DishDto();
         // 根据ID查询菜品数据
         Dish dish = dishService.getById(id);
@@ -114,4 +115,33 @@ public class DishController {
         return R.success("修改成功！");
     }
 
+    /**
+     * 删除菜品数据
+     * @param ids
+     * @return
+     */
+    @DeleteMapping
+    public R<String> deleteDish(String ids){
+        log.info("菜品ID为：{}",ids);
+        // 先删除菜品口味表中的数据
+        LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
+        dishFlavorService.removeByIds(ListUtil.transList(ids));
+        // 再删除菜品表中的数据
+        dishService.removeByIds(ListUtil.transList(ids));
+        return R.success("删除成功！");
+    }
+
+    /**
+     * 修改菜品状态
+     * @param ids
+     * @param status
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    public R<String> status(String ids, @PathVariable String status){
+        log.info("传入的id值为：{}，状态值为：{}",ids,status);
+        // 更新菜品表的状态
+        dishService.updateBatchById(ListUtil.transEntityList(ids,status));
+        return R.success("修改状态成功！");
+    }
 }
