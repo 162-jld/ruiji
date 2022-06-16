@@ -1,6 +1,7 @@
 package com.beim.ruiji.util;
 
 import com.beim.ruiji.entity.Dish;
+import com.beim.ruiji.entity.Setmeal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,15 +27,15 @@ public class ListUtil {
     }
 
     /**
-     * 封装ID值与status集合
+     * 封装ID值与status集合，菜品管理
      *
      * @param ids
      * @param status
      * @return
      */
-    public static List<Dish> transEntityList(String ids, String status) {
+    public static List transEntityList(String ids, String status) {
         String[] split1 = ids.split(",");
-        List dishList = new ArrayList();
+        List<Dish> dishList = new ArrayList();
         for (int i = 0; i < split1.length; i++) {
             Dish dish = new Dish();
             dish.setId(Long.valueOf(split1[i]));
@@ -42,5 +43,23 @@ public class ListUtil {
             dishList.add(dish);
         }
         return dishList;
+    }
+
+    /**
+     * 封装ID与status集合,套餐管理
+     * @param ids
+     * @param status
+     * @return
+     */
+    public static List transEntityList1(String ids, String status) {
+        String[] split1 = ids.split(",");
+        List<Setmeal> setmealList = new ArrayList();
+        for (int i = 0; i < split1.length; i++) {
+            Setmeal setmeal = new Setmeal();
+            setmeal.setId(Long.valueOf(split1[i]));
+            setmeal.setStatus(Integer.valueOf(status));
+            setmealList.add(setmeal);
+        }
+        return setmealList;
     }
 }
