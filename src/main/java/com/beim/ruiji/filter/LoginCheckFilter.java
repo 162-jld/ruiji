@@ -20,39 +20,46 @@ import java.io.IOException;
 public class LoginCheckFilter implements Filter {
 
     // 路径匹配器，支持通配符匹配
-    public static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
+    private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
 
+    // 路径白名单
+    private static final String[] URL_PATH = new String[]{
+            "/employee/login",
+            "/employee/logout",
+            "/backend/**",
+            "/front/**",
+            "/common/**",
+            "/user/sendMsg", // 移动端发送短信
+            "/user/login"  // 移动端登录
+    };
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        // 获取用户的ID
-        Long empId = (Long) request.getSession().getAttribute("employee");
-        // 将用户ID存储到ThreadLocal中
-        BaseContext.setCurrentId(empId);
-        log.info("拦截的请求，{}",request.getRequestURI());
-        // 白名单
-        String[] urls = new String[]{
-                "/employee/login",
-                "/employee/logout",
-                "/backend/**",
-                "/front/**",
-                "/common/**"
-        };
-
-        // 获取被拦截的请求路径
-        String requestURI = request.getRequestURI();
-        log.info("拦截到请求：{}",requestURI);
+        log.info("拦截到请求：{}",request.getRequestURI());
         // 检查是否需要放行
-        if (check(urls,requestURI)){
+        if (check(URL_PATH,request.getRequestURI())){
             filterChain.doFilter(request, response);
             return;
         }
-        // 判断用户是否完成登录
-        if (empId != null){
-            log.info("登录用户的id为：{}",request.getSession().getAttribute("employee"));
+        // 后管端，判断用户是否完成登录
+        if (request.getSession().getAttribute("employee") != null){
+            Long empId = (Long) request.getSession().getAttribute("employee");
+            log.info("登录用户的id为：{}",empId);
+            // 将用户ID存储到ThreadLocal中
+            BaseContext.setCurrentId(empId);
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // 移动端，判断移动端是否完成登录
+        if (request.getSession().getAttribute("user") != null){
+            Long userId = (Long) request.getSession().getAttribute("user");
+            log.info("登录用户的id为：{}",userId);
+            // 将用户ID存储到ThreadLocal中
+            BaseContext.setCurrentId(userId);
             filterChain.doFilter(request, response);
             return;
         }
