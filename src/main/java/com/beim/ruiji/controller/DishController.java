@@ -49,7 +49,6 @@ public class DishController {
 
     /**
      * 分页查询数据
-     *
      * @param page
      * @param pageSize
      * @param name
@@ -87,7 +86,6 @@ public class DishController {
 
     /**
      * 根据ID回显菜品数据
-     *
      * @param id
      * @return
      */
@@ -98,7 +96,7 @@ public class DishController {
         Dish dish = dishService.getById(id);
         // 根据菜品ID查询菜品口味数据
         LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(DishFlavor::getDishId, dish.getCategoryId());
+        queryWrapper.eq(DishFlavor::getDishId, dish.getId());
         List<DishFlavor> list = dishFlavorService.list(queryWrapper);
         // 封装回显数据
         dishDto.setFlavors(list);
@@ -108,7 +106,6 @@ public class DishController {
 
     /**
      * 更新数据
-     *
      * @param dishDto
      * @return
      */
@@ -121,7 +118,6 @@ public class DishController {
 
     /**
      * 删除菜品数据,包括单个删除以及批量删除
-     *
      * @param ids
      * @return
      */
@@ -138,7 +134,6 @@ public class DishController {
 
     /**
      * 修改菜品状态
-     *
      * @param ids
      * @param status
      * @return
@@ -153,12 +148,11 @@ public class DishController {
 
     /**
      * 根据分类ID查询该分类下所有的菜品
-     *
      * @param dish
      * @return
      */
     @GetMapping("/list")
-    public R<List<Dish>> list(Dish dish) {
+    public R<List<DishDto>> list(Dish dish) {
         log.info("传递的套餐数据为：{}", dish.toString());
         // 封装查询条件
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
@@ -168,7 +162,26 @@ public class DishController {
         queryWrapper.eq(Dish::getStatus, 1);  // 查询为起售状态的菜品数据
         // 查询数据
         List<Dish> list = dishService.list(queryWrapper);
+
+        List<DishDto> dishDtoList = list.stream().map((item) -> {
+            // 组装DishDTO数据集
+            DishDto dishDto = new DishDto();
+            // 将DishDTO继承自Dish中的属性填充
+            BeanUtils.copyProperties(item, dishDto);
+            Long categoryId = item.getCategoryId();
+            // 设置分类名称
+            Category category = categoryService.getById(categoryId);
+            if (category != null) {
+                dishDto.setCategoryName(category.getName());
+            }
+            // 根据菜品查询菜品下对应的口味数据
+            LambdaQueryWrapper<DishFlavor> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.eq(DishFlavor::getDishId,item.getId()).eq(DishFlavor::getIsDeleted,0);
+            List<DishFlavor> dishFlavorList = dishFlavorService.list(lambdaQueryWrapper);
+            dishDto.setFlavors(dishFlavorList);
+            return dishDto;
+        }).collect(Collectors.toList());
         log.info("返回的结果数据为：{}", list);
-        return R.success(list);
+        return R.success(dishDtoList);
     }
 }
