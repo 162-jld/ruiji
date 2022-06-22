@@ -166,5 +166,22 @@ public class SetmealController {
         return R.success("修改状态成功！");
     }
 
+    /**
+     * 根据分类ID列表查询套餐数据
+     * @param categoryId
+     * @param status
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Setmeal>> list(Long categoryId,Integer status){
+        log.info("分类ID为：{}，状态为{}：",categoryId,status);
+        // 封装条件
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(categoryId != null,Setmeal::getCategoryId,categoryId);
+        queryWrapper.eq(status != null,Setmeal::getStatus,status);
+        return R.success(setmealService.list(queryWrapper));
+    }
+
+
 
 }
