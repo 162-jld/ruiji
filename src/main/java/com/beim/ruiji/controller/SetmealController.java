@@ -12,6 +12,7 @@ import com.beim.ruiji.util.ListUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -172,6 +173,8 @@ public class SetmealController {
      * @param status
      * @return
      */
+    // Cacheable  注解的作用，当redis中有数据时，则直接展示redis中的数据，如果没有数据，则调用方法将数据缓存进redis中
+    @Cacheable(value = "setMealCache",key = "#categoryId + '_' + #status")
     @GetMapping("/list")
     public R<List<Setmeal>> list(Long categoryId,Integer status){
         log.info("分类ID为：{}，状态为{}：",categoryId,status);
@@ -181,7 +184,4 @@ public class SetmealController {
         queryWrapper.eq(status != null,Setmeal::getStatus,status);
         return R.success(setmealService.list(queryWrapper));
     }
-
-
-
 }
